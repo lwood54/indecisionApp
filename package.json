@@ -1,0 +1,12 @@
+{
+  "name": "indecisionApp",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/lwood54/indecisionApp.git",
+  "author": "Logan Wood <lwood3499@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "babel-preset-env": "1.5.2",
+    "babel-preset-react": "6.24.1"
+  }
+}

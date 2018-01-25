@@ -6,14 +6,14 @@ console.log('App.js is running!');
 // use title/subtitle in the template
 // render template
 
-var app = {
+const app = {
     title: 'Indecision App',
     subtitle: "We've got you covered.",
     options: ['one', 'two']
 }
 
 // JSX - JavaScript XML
-var template =(
+const template =(
     <div>
         <h1>{app.title}</h1>
         {app.subtitle && <p>{app.subtitle}</p>}
@@ -25,34 +25,37 @@ var template =(
     </div>
 );
 
-var user = {
-    name: 'Logan',
-    age: 35,
-    location: 'Fort Worth'
-}
-var userName = 'Percival';
-var userAge = 36;
-var userLocation = 'Dallas';
-var templateTwo = (
+let count = 0;
+const addOne = () => {
+    console.log('added one');
+    count++;
+    console.log('count: ', count);
+    
+};
+const minusOne = () => {
+    console.log('subtracted one');
+    count--;
+    console.log('count: ', count);
+};
+const reset = () => {
+    console.log('reset');
+    count = 0;
+    console.log('count: ', count);
+};
+const templateTwo = (
     <div>
-        <h1>{user.name ? user.name : 'Anonymous'}</h1>
-        {(user.age && user.age >= 18) && <p>Age: {user.age}</p>}
-        {getLocation(user.location)}
+        <h1>Count: {count}</h1>
+        <button onClick={addOne}>+ 1</button>
+        <button onClick={minusOne}>- 1</button>
+        <button onClick={reset}>reset</button>
     </div>
 );
 
-// the else {
-//      returns undefined
-//  }
-// which can be very useful as nothing will be rendered through JSX
-function getLocation(location) {
-    if (location) {
-        return (<p>Location: {location}</p>);
-    }
-}
 
-var appRoot = document.getElementById("app");
+console.log(templateTwo);
 
-// ReactDOM.render(template, appRoot);
-ReactDOM.render(template, appRoot);
+
+const appRoot = document.getElementById("app");
+
+ReactDOM.render(templateTwo, appRoot);
 

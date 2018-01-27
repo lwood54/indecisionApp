@@ -11,87 +11,91 @@ console.log('App.js is running!');
 var app = {
     title: 'Indecision App',
     subtitle: "We've got you covered.",
-    options: ['one', 'two']
-
-    // JSX - JavaScript XML
-};var template = React.createElement(
-    'div',
-    null,
-    React.createElement(
-        'h1',
-        null,
-        app.title
-    ),
-    app.subtitle && React.createElement(
-        'p',
-        null,
-        app.subtitle
-    ),
-    React.createElement(
-        'p',
-        null,
-        app.options.length > 0 ? "Here are your options" : "No options"
-    ),
-    React.createElement(
-        'ol',
-        null,
-        React.createElement(
-            'li',
-            null,
-            'Item one'
-        ),
-        React.createElement(
-            'li',
-            null,
-            'Item two'
-        )
-    )
-);
-
-var count = 0;
-var addOne = function addOne() {
-    console.log('added one');
-    count++;
-    console.log('count: ', count);
+    options: []
 };
-var minusOne = function minusOne() {
-    console.log('subtracted one');
-    count--;
-    console.log('count: ', count);
-};
-var reset = function reset() {
-    console.log('reset');
-    count = 0;
-    console.log('count: ', count);
-};
-var templateTwo = React.createElement(
-    'div',
-    null,
-    React.createElement(
-        'h1',
-        null,
-        'Count: ',
-        count
-    ),
-    React.createElement(
-        'button',
-        { onClick: addOne },
-        '+ 1'
-    ),
-    React.createElement(
-        'button',
-        { onClick: minusOne },
-        '- 1'
-    ),
-    React.createElement(
-        'button',
-        { onClick: reset },
-        'reset'
-    )
-);
 
-console.log(templateTwo);
+var onFormSubmit = function onFormSubmit(ev) {
+    ev.preventDefault();
+
+    var option = ev.target.elements.option.value;
+
+    if (option) {
+        app.options.push(option);
+        ev.target.elements.option.value = '';
+        // re-render app
+        render();
+    }
+};
+
+// create 'remove all" button above list
+// onClick handler, completely wipe options array, re-render
+var removeAll = function removeAll(ev) {
+    app.options = [];
+    render();
+};
 
 var appRoot = document.getElementById("app");
 
-ReactDOM.render(templateTwo, appRoot);
+var onMakeDecision = function onMakeDecision() {
+    var randomNum = Math.floor(Math.random() * app.options.length);
+    var option = app.options[randomNum];
+    console.log(option);
+};
+
+var render = function render() {
+    // JSX - JavaScript XML
+    var template = React.createElement(
+        'div',
+        null,
+        React.createElement(
+            'h1',
+            null,
+            app.title
+        ),
+        app.subtitle && React.createElement(
+            'p',
+            null,
+            app.subtitle
+        ),
+        React.createElement(
+            'p',
+            null,
+            app.options.length > 0 ? "Here are your options" : "No options"
+        ),
+        React.createElement(
+            'button',
+            { disabled: app.options.length === 0, onClick: onMakeDecision },
+            'What should I do?'
+        ),
+        React.createElement(
+            'button',
+            { onClick: removeAll },
+            'Remove All'
+        ),
+        React.createElement(
+            'ol',
+            null,
+            app.options.map(function (option) {
+                return React.createElement(
+                    'li',
+                    { key: option },
+                    option
+                );
+            })
+        ),
+        React.createElement(
+            'form',
+            { onSubmit: onFormSubmit },
+            React.createElement('input', { type: 'text', name: 'option' }),
+            React.createElement(
+                'button',
+                null,
+                'Add option'
+            )
+        )
+    );
+
+    ReactDOM.render(template, appRoot);
+};
+
+render();

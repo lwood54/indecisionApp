@@ -9,53 +9,61 @@ console.log('App.js is running!');
 const app = {
     title: 'Indecision App',
     subtitle: "We've got you covered.",
-    options: ['one', 'two']
-}
+    options: []
+};
 
-// JSX - JavaScript XML
-const template =(
-    <div>
-        <h1>{app.title}</h1>
-        {app.subtitle && <p>{app.subtitle}</p>}
-        <p>{app.options.length > 0 ? "Here are your options" : "No options"}</p>
-        <ol>
-            <li>Item one</li>
-            <li>Item two</li>
-        </ol>
-    </div>
-);
-
-let count = 0;
-const addOne = () => {
-    console.log('added one');
-    count++;
-    console.log('count: ', count);
+const onFormSubmit = (ev) => {
+    ev.preventDefault();
     
+    const option = ev.target.elements.option.value;
+    
+    if(option) {
+        app.options.push(option);
+        ev.target.elements.option.value = '';
+        // re-render app
+        render();
+    }
 };
-const minusOne = () => {
-    console.log('subtracted one');
-    count--;
-    console.log('count: ', count);
-};
-const reset = () => {
-    console.log('reset');
-    count = 0;
-    console.log('count: ', count);
-};
-const templateTwo = (
-    <div>
-        <h1>Count: {count}</h1>
-        <button onClick={addOne}>+ 1</button>
-        <button onClick={minusOne}>- 1</button>
-        <button onClick={reset}>reset</button>
-    </div>
-);
 
 
-console.log(templateTwo);
-
+// create 'remove all" button above list
+// onClick handler, completely wipe options array, re-render
+const removeAll = (ev) => {
+    app.options = [];
+    render();
+};
 
 const appRoot = document.getElementById("app");
 
-ReactDOM.render(templateTwo, appRoot);
+const onMakeDecision = () => {
+    const randomNum = Math.floor(Math.random() * app.options.length);
+    const option = app.options[randomNum];
+    console.log(option);
+};
 
+const render = () => {
+    // JSX - JavaScript XML
+    const template =(
+        <div>
+            <h1>{app.title}</h1>
+            {app.subtitle && <p>{app.subtitle}</p>}
+            <p>{app.options.length > 0 ? "Here are your options" : "No options"}</p>
+            <button disabled={app.options.length === 0} onClick={onMakeDecision}>What should I do?</button>
+            <button onClick={removeAll}>Remove All</button>
+            <ol>
+                {/* map over app.options getting an array of lis (set key and text for each)*/}
+                {
+                    app.options.map((option) => <li key={option}>{option}</li>)
+                }
+            </ol>
+            <form onSubmit={onFormSubmit}>
+                <input type="text" name="option" />
+                <button>Add option</button>
+            </form>
+        </div>
+    );
+
+    ReactDOM.render(template, appRoot);
+};
+
+render();

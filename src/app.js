@@ -1,69 +1,101 @@
-// JSX file that will auto-generate content via babel and output to: public/scripts/app.js
-// command line: babel src/app.js --out-file=public/scripts/app.js --presets=env,react --watch
-console.log('App.js is running!');
 
-// create app object title/subtitle
-// use title/subtitle in the template
-// render template
+// We are rendering this Component while nesting the other
+// components in here. Some of those components have nested
+// components of their own. We have to pass key=value pairs
+// as, essentially, attributes in order to be able to access
+// them in the components that are nested within.
+class IndecisionApp extends React.Component {
+    render() {
+        const title = 'Indecision';
+        const subtitle = "We've got you covered";
+        const options = ['Thing one', 'Thing two', 'Thing four'];
 
-const app = {
-    title: 'Indecision App',
-    subtitle: "We've got you covered.",
-    options: []
-};
-
-const onFormSubmit = (ev) => {
-    ev.preventDefault();
-    
-    const option = ev.target.elements.option.value;
-    
-    if(option) {
-        app.options.push(option);
-        ev.target.elements.option.value = '';
-        // re-render app
-        render();
+        return (
+            <div>
+                <Header title={title} subtitle={subtitle}/>
+                <Action />
+                <Options options={options}/>
+                <AddOption />
+            </div>
+        );
     }
-};
+}
+
+class Header extends React.Component {
+    render() {
+        
+        return (
+            <div>
+                <h1>{this.props.title}</h1>
+                <h2>{this.props.subtitle}</h2>
+            </div>
+        );
+    }
+}
+
+class Action extends React.Component {
+    // set up in class method to use instead of global method
+    handlePick() {
+        alert('Handle pick');
+    }
+    render() {
+        return (
+            <div>
+                <button onClick={this.handlePick}>What should I do?</button>
+            </div>
+        );
+    }
+}
 
 
-// create 'remove all" button above list
-// onClick handler, completely wipe options array, re-render
-const removeAll = (ev) => {
-    app.options = [];
-    render();
-};
 
-const appRoot = document.getElementById("app");
+// <Option />   works the same as <Option></Option>
+class Options extends React.Component {
+    handleRemoveAll() {
+        alert('all your base are belong to us');
+    }
+    render() {
+        return (
+            <div>
+                <button onClick={this.handleRemoveAll}>Remove All</button> 
+                { // JS expressions can go in here
+                    this.props.options.map((option) => <Option key={option} optionText={option}/>)
+                }               
+            </div>
+        );
+    }
+}
 
-const onMakeDecision = () => {
-    const randomNum = Math.floor(Math.random() * app.options.length);
-    const option = app.options[randomNum];
-    console.log(option);
-};
+class Option extends React.Component {
+    render() {
+        return (
+            <div>
+                <p>{this.props.optionText}</p>
+            </div>
+        );
+    }
+}
+class AddOption extends React.Component {
+    handleAddOption(ev) {
+        // prevents the default, which includes a full page refresh
+        ev.preventDefault();
+        const option = ev.target.elements.option.value.trim();
+        ev.target.elements.option.value = '';
+        if (option) {
+            alert(option);
+        }
+    }
+    render() {
+        return (
+            <div>
+                <form onSubmit={this.handleAddOption}>
+                    <input type="text" name="option" />
+                    <button>Add option</button>
+                </form>
+            </div>
+        );
+    }
+}
 
-const render = () => {
-    // JSX - JavaScript XML
-    const template =(
-        <div>
-            <h1>{app.title}</h1>
-            {app.subtitle && <p>{app.subtitle}</p>}
-            <p>{app.options.length > 0 ? "Here are your options" : "No options"}</p>
-            <button disabled={app.options.length === 0} onClick={onMakeDecision}>What should I do?</button>
-            <button onClick={removeAll}>Remove All</button>
-            <ol>
-                {/* map over app.options getting an array of lis (set key and text for each)*/}
-                {
-                    app.options.map((option) => <li key={option}>{option}</li>)
-                }
-            </ol>
-            <form onSubmit={onFormSubmit}>
-                <input type="text" name="option" />
-                <button>Add option</button>
-            </form>
-        </div>
-    );
 
-    ReactDOM.render(template, appRoot);
-};
-
-render();
+ReactDOM.render(<IndecisionApp />, document.getElementById('app'));

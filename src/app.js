@@ -11,7 +11,7 @@ class IndecisionApp extends React.Component {
         this.handlePick = this.handlePick.bind(this);
         this.handleAddOption = this.handleAddOption.bind(this);
         this.state = {
-            options: []
+            options: props.options
         };
     }
 
@@ -44,12 +44,11 @@ class IndecisionApp extends React.Component {
     }
 
     render() {
-        const title = 'Indecision';
         const subtitle = "We've got you covered";
 
         return (
             <div>
-                <Header title={title} subtitle={subtitle}/>
+                <Header subtitle={subtitle}/>
                 <Action 
                     hasOptions={this.state.options.length > 0}
                     handlePick={this.handlePick}
@@ -66,57 +65,79 @@ class IndecisionApp extends React.Component {
     }
 }
 
-class Header extends React.Component {
-    render() {
-        return (
-            <div>
-                <h1>{this.props.title}</h1>
-                <h2>{this.props.subtitle}</h2>
-            </div>
-        );
-    }
-}
+IndecisionApp.defaultProps = {
+    options: []
+};
 
-class Action extends React.Component {
-    render() {
-        return (
-            <div>
-                <button 
-                onClick={this.props.handlePick}
-                disabled={!this.props.hasOptions}
+// stateless functional component
+const Header = (props) => {
+    return (
+        <div>
+            <h1>{props.title}</h1>
+            {props.subtitle && <h2>{props.subtitle}</h2>}
+        </div>
+    );
+};
+
+// you can add on default properties after a component has been created
+Header.defaultProps = {
+    title: 'Indecision'
+};
+
+//stateless functional version of Action component
+const Action = (props) => {
+    return (
+        <div>
+            <button 
+                onClick={props.handlePick}
+                disabled={!props.hasOptions}
                 >
                 What should I do?
-                </button>
-            </div>
-        );
-    }
-}
+            </button>
+        </div>
+    );
+};
+
+
+// class based component, in which state is allowed
+// class Action extends React.Component {
+//     render() {
+//         return (
+//             <div>
+//                 <button 
+//                 onClick={this.props.handlePick}
+//                 disabled={!this.props.hasOptions}
+//                 >
+//                 What should I do?
+//                 </button>
+//             </div>
+//         );
+//     }
+// }
 
 
 
 // <Option />   works the same as <Option></Option>
-class Options extends React.Component {
-    render() {
-        return (
-            <div>
-                <button onClick={this.props.handleDeleteOptions}>Remove All</button> 
-                { // JS expressions can go in here
-                    this.props.options.map((option) => <Option key={option} optionText={option}/>)
-                }               
-            </div>
-        );
-    }
+const Options = (props) => {
+    return (
+        <div>
+            <button onClick={props.handleDeleteOptions}>Remove All</button> 
+            { // JS expressions can go in here
+                props.options.map((option) => <Option key={option} optionText={option}/>)
+            }               
+        </div>
+    );
+};
+
+const Option = (props) => {
+    return (
+        <div>
+            <p>{props.optionText}</p>
+        </div>
+    );
 }
 
-class Option extends React.Component {
-    render() {
-        return (
-            <div>
-                <p>{this.props.optionText}</p>
-            </div>
-        );
-    }
-}
+// keep this a class based component because a state within the component is needed
 class AddOption extends React.Component {
     // we have to add a constructor here because we are using 'this' within
     // a class method, so we need to make sure to have access to the this object
@@ -154,4 +175,16 @@ class AddOption extends React.Component {
 }
 
 
+// stateless functional component
+// don't allow state, but they do still manage props
+const User = (props) => {
+    return (
+        <div>
+            <p>Name: {props.name}</p>
+            <p>Age: {props.age}</p>
+        </div>
+    );
+};
+
 ReactDOM.render(<IndecisionApp />, document.getElementById('app'));
+// ReactDOM.render(<User name="Logan" age={35}/>, document.getElementById('app'));

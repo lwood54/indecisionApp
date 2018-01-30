@@ -6,10 +6,34 @@ class Counter extends React.Component {
         this.handleMinusOne = this.handleMinusOne.bind(this);
         this.handleReset = this.handleReset.bind(this);
         this.state = {
-            count: props.count,
+            count: 0,
             name: 'Logan'
         };
     }
+
+    componentDidMount() {
+        try {
+            const count = parseInt(localStorage.getItem('count'),10);
+
+            if (!isNaN(count) && count) {
+                console.log('fetching data');
+                this.setState(() => ({ count }));
+                // same as saying this:
+                // this.setState(() => ({count: count}));
+            }
+        } catch (error) {
+            
+        }
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        const count = this.state.count;
+        if (prevState.count !== count) {
+            localStorage.setItem('count', count);
+            console.log('saving data to local storage');
+        }
+    }
+
     handleAddOne() {
         // this.setState({count: this.state.count + 1});    // ALSO WORKED
         this.setState((prevState) => {
@@ -47,12 +71,19 @@ class Counter extends React.Component {
     }
 }
 
-Counter.defaultProps = {
-    count: 0
-};
+// Counter.defaultProps = {
+//     count: 0
+// };
 
-ReactDOM.render(<Counter count={5} />, document.getElementById('app'));
+// we also removed count: props.count from constructor function
+// we do this because we are currently using localStorage, and later
+// we'll be using a database.
 
+ReactDOM.render(<Counter />, document.getElementById('app'));
+// Now that we have changed
+// count: props.count back to count: 0,
+// it no longer does anything with the 'count={5}' in this line:
+// ReactDOM.render(<Counter count={5} />, document.getElementById('app'));
 
 
 

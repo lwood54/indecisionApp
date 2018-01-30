@@ -12,8 +12,40 @@ class IndecisionApp extends React.Component {
         this.handleAddOption = this.handleAddOption.bind(this);
         this.handleDeleteOption = this.handleDeleteOption.bind(this);
         this.state = {
-            options: props.options
+            options: []
         };
+    }
+
+    // life cycle method only available in class based components
+    componentDidMount() {
+        try {
+            const json = localStorage.getItem('options');
+            const options = JSON.parse(json);
+        
+            if (options) {
+                this.setState(() => ({ options }));
+            }
+        } catch (err) {
+
+        }
+        
+    }
+
+    // life cycle method only available in class based components
+    componentDidUpdate(prevProps, prevState) {
+        if (prevState.options.length !== this.state.options.length) {
+            const json = JSON.stringify(this.state.options);
+            localStorage.setItem('options', json);
+            console.log('saving data');
+        }
+        
+        
+    }
+
+    // life cycle method only available in class based components
+    componentWillUnmount() {
+        console.log('componentWillUnmount!');
+        
     }
 
     handleDeleteOptions() {
@@ -65,10 +97,6 @@ class IndecisionApp extends React.Component {
         );
     }
 }
-
-IndecisionApp.defaultProps = {
-    options: []
-};
 
 // stateless functional component
 const Header = (props) => {
@@ -123,6 +151,7 @@ const Options = (props) => {
     return (
         <div>
             <button onClick={props.handleDeleteOptions}>Remove All</button> 
+            {props.options.length === 0 && <p>Please add an option to getstarted!</p>}
             { // JS expressions can go in here
                 props.options.map((option) => (
                     <Option 
@@ -164,16 +193,19 @@ class AddOption extends React.Component {
             error: undefined
         }
     }
+
     handleAddOption(ev) {
         // prevents the default, which includes a full page refresh
         ev.preventDefault();
         const option = ev.target.elements.option.value.trim();
         const error = this.props.handleAddOption(option);
-        ev.target.elements.option.value = '';
-
                         // error: error is the same as {error}
                         // it is short hand
         this.setState(() => ({error}));
+
+        if (!error) {
+            ev.target.elements.option.value = '';
+        }
     }
     render() {
         return (
